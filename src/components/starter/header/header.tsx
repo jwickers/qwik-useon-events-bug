@@ -92,7 +92,7 @@ export const TestComponent = component$(() => {
   );
 });
 
-export const TestComponentWorking = component$(() => {
+export const TestComponentWrapped = component$(() => {
   const latestKey = useSignal("");
   const keyCount = useSignal(0);
   const clickCount = useSignal(0);
@@ -100,13 +100,13 @@ export const TestComponentWorking = component$(() => {
   useVisibleTask$(({ track }) => {
     // make sure the suggest dropdown closes when the search is submitted
     const k = track(() => latestKey.value);
-    console.log("TestComponentWorking::task::latestKey = ", k);
+    console.log("TestComponentWrapped::task::latestKey = ", k);
   });
   useOnDocument(
     "click",
     $((e) => {
       clickCount.value++;
-      console.warn("TestComponentWorking::click", e);
+      console.warn("TestComponentWrapped::click", e);
     })
   );
   useOnDocument(
@@ -114,7 +114,7 @@ export const TestComponentWorking = component$(() => {
     $(async (event) => {
       keyCount.value++;
       const e = event as KeyboardEvent;
-      console.warn("TestComponentWorking::keydown", e);
+      console.warn("TestComponentWrapped::keydown", e);
       latestKey.value = e.code;
     })
   );
@@ -125,10 +125,10 @@ export const TestComponentWorking = component$(() => {
       // pause for 1 second
       await new Promise((resolve) => setTimeout(resolve, 1000));
       const res = value.toUpperCase();
-      console.log("TestComponentWorking::useResource::value = ", res);
+      console.log("TestComponentWrapped::useResource::value = ", res);
       if (res === "ESCAPE") {
         console.warn(
-          "TestComponentWorking::useResource:: returning an empty string does not trigger any bug."
+          "TestComponentWrapped::useResource:: returning an empty string does not trigger any bug."
         );
         return "";
       }
@@ -199,7 +199,7 @@ export default component$(() => {
         DIV inside the Resource have the event handlers. After pressing ESC the
         second DIV is removed so events are counted only once correctly.
       </p>
-      <TestComponentWorking />
+      <TestComponentWrapped />
     </header>
   );
 });
