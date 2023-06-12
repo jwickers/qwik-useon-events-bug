@@ -12,6 +12,8 @@ import styles from "./header.module.css";
 
 export const TestComponent = component$(() => {
   const latestKey = useSignal("");
+  const keyCount = useSignal(0);
+  const clickCount = useSignal(0);
 
   useVisibleTask$(({ track }) => {
     // make sure the suggest dropdown closes when the search is submitted
@@ -21,12 +23,14 @@ export const TestComponent = component$(() => {
   useOnDocument(
     "click",
     $((e) => {
+      clickCount.value++;
       console.warn("TestComponent::click", e);
     })
   );
   useOnDocument(
     "keydown",
     $(async (event) => {
+      keyCount.value++;
       const e = event as KeyboardEvent;
       console.warn("TestComponent::keydown", e);
       latestKey.value = e.code;
@@ -67,10 +71,19 @@ export const TestComponent = component$(() => {
                   <div>
                     <b>Resource data: {data}</b>
                   </div>
+                  <div>
+                    <b>Click count: {clickCount.value}</b>
+                  </div>
+                  <div>
+                    <b>Key count: {keyCount.value}</b>
+                  </div>
                 </div>
               </>
             ) : latestKey.value ? (
-              <>Nothing, you pressed ESCAPE ... and the events no longer work</>
+              <>
+                Nothing, you pressed ESCAPE ... and the events no longer work.
+                Click Count {clickCount.value} Key Count {keyCount.value}
+              </>
             ) : (
               <>Press any key</>
             )}
@@ -83,6 +96,8 @@ export const TestComponent = component$(() => {
 
 export const TestComponentWorking = component$(() => {
   const latestKey = useSignal("");
+  const keyCount = useSignal(0);
+  const clickCount = useSignal(0);
 
   useVisibleTask$(({ track }) => {
     // make sure the suggest dropdown closes when the search is submitted
@@ -92,12 +107,14 @@ export const TestComponentWorking = component$(() => {
   useOnDocument(
     "click",
     $((e) => {
+      clickCount.value++;
       console.warn("TestComponentWorking::click", e);
     })
   );
   useOnDocument(
     "keydown",
     $(async (event) => {
+      keyCount.value++;
       const e = event as KeyboardEvent;
       console.warn("TestComponentWorking::keydown", e);
       latestKey.value = e.code;
@@ -138,10 +155,19 @@ export const TestComponentWorking = component$(() => {
                   <div>
                     <b>Resource data: {data}</b>
                   </div>
+                  <div>
+                    <b>Click count: {clickCount.value}</b>
+                  </div>
+                  <div>
+                    <b>Key count: {keyCount.value}</b>
+                  </div>
                 </div>
               </>
             ) : latestKey.value ? (
-              <>Nothing, you pressed ESCAPE ... and the events no longer work</>
+              <>
+                Nothing, you pressed ESCAPE ... and the events no longer work.
+                Click Count {clickCount.value} Key Count {keyCount.value}
+              </>
             ) : (
               <>Press any key</>
             )}
@@ -168,7 +194,13 @@ export default component$(() => {
         or key events.
       </p>
       <TestComponent />
-      <p>Here is the same component but its JSX is wrapped in a DIV.</p>
+      <p>
+        Here is the same component but its JSX is wrapped in a DIV. Pressing ESC
+        does not stop the event registering BUT events are listened to twice.
+        This is also visible in the Inspector as both the wrapping DIV and the
+        DIV inside the Resource have the event handlers. After pressing ESC the
+        second DIV is removed so events are counted only once correctly.
+      </p>
       <TestComponentWorking />
     </header>
   );
