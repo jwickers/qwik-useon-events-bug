@@ -1,9 +1,7 @@
 import {
   $,
-  Resource,
   component$,
   useOnDocument,
-  useResource$,
   useSignal,
   useVisibleTask$,
 } from "@builder.io/qwik";
@@ -16,7 +14,6 @@ export const TestComponent = component$(() => {
   const clickCount = useSignal(0);
 
   useVisibleTask$(({ track }) => {
-    // make sure the suggest dropdown closes when the search is submitted
     const k = track(() => latestKey.value);
     console.log("TestComponent::task::latestKey = ", k);
   });
@@ -37,58 +34,31 @@ export const TestComponent = component$(() => {
     })
   );
 
-  const resource = useResource$<string | null>(async ({ track }) => {
-    const value = track(() => latestKey.value);
-    if (value) {
-      // pause for 1 second
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const res = value.toUpperCase();
-      console.log("TestComponent::useResource::value = ", res);
-      if (res === "ESCAPE") {
-        console.warn(
-          "TestComponent::useResource:: returning an empty string to switch the condition inside the Resource render block, somehow this will cause the events to no longer register."
-        );
-        return "";
-      }
-      return res;
-    }
-    return null;
-  });
-
   return (
-    <Resource
-      value={resource}
-      onPending={() => <>Loading key ...</>}
-      onResolved={(data) => (
+    <>
+      {latestKey.value && latestKey.value != "Escape" ? (
         <>
-          {data ? (
-            <>
-              <div>
-                <div>
-                  <b>Latest Key: {latestKey.value}</b>
-                </div>
-                <div>
-                  <b>Resource data: {data}</b>
-                </div>
-                <div>
-                  <b>Click count: {clickCount.value}</b>
-                </div>
-                <div>
-                  <b>Key count: {keyCount.value}</b>
-                </div>
-              </div>
-            </>
-          ) : latestKey.value ? (
-            <>
-              Nothing, you pressed ESCAPE ... and the events no longer work.
-              Click Count {clickCount.value} Key Count {keyCount.value}
-            </>
-          ) : (
-            <>Press any key</>
-          )}
+          <div>
+            <div>
+              <b>Latest Key: {latestKey.value}</b>
+            </div>
+            <div>
+              <b>Click count: {clickCount.value}</b>
+            </div>
+            <div>
+              <b>Key count: {keyCount.value}</b>
+            </div>
+          </div>
         </>
+      ) : latestKey.value ? (
+        <>
+          Nothing, you pressed ESCAPE ... and the events no longer work. Click
+          Count {clickCount.value} Key Count {keyCount.value}
+        </>
+      ) : (
+        <>Press any key</>
       )}
-    />
+    </>
   );
 });
 
@@ -98,7 +68,6 @@ export const TestComponentWrapped = component$(() => {
   const clickCount = useSignal(0);
 
   useVisibleTask$(({ track }) => {
-    // make sure the suggest dropdown closes when the search is submitted
     const k = track(() => latestKey.value);
     console.log("TestComponentWrapped::task::latestKey = ", k);
   });
@@ -119,59 +88,30 @@ export const TestComponentWrapped = component$(() => {
     })
   );
 
-  const resource = useResource$<string | null>(async ({ track }) => {
-    const value = track(() => latestKey.value);
-    if (value) {
-      // pause for 1 second
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const res = value.toUpperCase();
-      console.log("TestComponentWrapped::useResource::value = ", res);
-      if (res === "ESCAPE") {
-        console.warn(
-          "TestComponentWrapped::useResource:: returning an empty string does not trigger any bug."
-        );
-        return "";
-      }
-      return res;
-    }
-    return null;
-  });
-
   return (
     <div>
-      <Resource
-        value={resource}
-        onPending={() => <>Loading key ...</>}
-        onResolved={(data) => (
-          <>
-            {data ? (
-              <>
-                <div>
-                  <div>
-                    <b>Latest Key: {latestKey.value}</b>
-                  </div>
-                  <div>
-                    <b>Resource data: {data}</b>
-                  </div>
-                  <div>
-                    <b>Click count: {clickCount.value}</b>
-                  </div>
-                  <div>
-                    <b>Key count: {keyCount.value}</b>
-                  </div>
-                </div>
-              </>
-            ) : latestKey.value ? (
-              <>
-                Nothing, you pressed ESCAPE ... and the events no longer work.
-                Click Count {clickCount.value} Key Count {keyCount.value}
-              </>
-            ) : (
-              <>Press any key</>
-            )}
-          </>
-        )}
-      />
+      {latestKey.value && latestKey.value != "Escape" ? (
+        <>
+          <div>
+            <div>
+              <b>Latest Key: {latestKey.value}</b>
+            </div>
+            <div>
+              <b>Click count: {clickCount.value}</b>
+            </div>
+            <div>
+              <b>Key count: {keyCount.value}</b>
+            </div>
+          </div>
+        </>
+      ) : latestKey.value ? (
+        <>
+          Nothing, you pressed ESCAPE ... and the events no longer work. Click
+          Count {clickCount.value} Key Count {keyCount.value}
+        </>
+      ) : (
+        <>Press any key</>
+      )}
     </div>
   );
 });
@@ -193,11 +133,11 @@ export default component$(() => {
       </p>
       <TestComponent />
       <p>
-        Here is the same component but its JSX is wrapped in a DIV. Pressing ESC
-        does not stop the event registering BUT events are listened to twice.
-        This is also visible in the Inspector as both the wrapping DIV and the
-        DIV inside the Resource have the event handlers. After pressing ESC the
-        second DIV is removed so events are counted only once correctly.
+        Here is the same component but its JSX is wrapped in a DIV, now events
+        are listened to *twice*. This is also visible in the Inspector as both
+        the wrapping DIV and the DIV inside it have the event handlers. After
+        pressing ESC the second DIV is removed so events are counted only once
+        correctly.
       </p>
       <TestComponentWrapped />
     </header>
