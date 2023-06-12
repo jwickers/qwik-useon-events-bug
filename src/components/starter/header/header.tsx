@@ -56,41 +56,39 @@ export const TestComponent = component$(() => {
   });
 
   return (
-    <>
-      <Resource
-        value={resource}
-        onPending={() => <>Loading key ...</>}
-        onResolved={(data) => (
-          <>
-            {data ? (
-              <>
+    <Resource
+      value={resource}
+      onPending={() => <>Loading key ...</>}
+      onResolved={(data) => (
+        <>
+          {data ? (
+            <>
+              <div>
                 <div>
-                  <div>
-                    <b>Latest Key: {latestKey.value}</b>
-                  </div>
-                  <div>
-                    <b>Resource data: {data}</b>
-                  </div>
-                  <div>
-                    <b>Click count: {clickCount.value}</b>
-                  </div>
-                  <div>
-                    <b>Key count: {keyCount.value}</b>
-                  </div>
+                  <b>Latest Key: {latestKey.value}</b>
                 </div>
-              </>
-            ) : latestKey.value ? (
-              <>
-                Nothing, you pressed ESCAPE ... and the events no longer work.
-                Click Count {clickCount.value} Key Count {keyCount.value}
-              </>
-            ) : (
-              <>Press any key</>
-            )}
-          </>
-        )}
-      />
-    </>
+                <div>
+                  <b>Resource data: {data}</b>
+                </div>
+                <div>
+                  <b>Click count: {clickCount.value}</b>
+                </div>
+                <div>
+                  <b>Key count: {keyCount.value}</b>
+                </div>
+              </div>
+            </>
+          ) : latestKey.value ? (
+            <>
+              Nothing, you pressed ESCAPE ... and the events no longer work.
+              Click Count {clickCount.value} Key Count {keyCount.value}
+            </>
+          ) : (
+            <>Press any key</>
+          )}
+        </>
+      )}
+    />
   );
 });
 
